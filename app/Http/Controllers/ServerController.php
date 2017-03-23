@@ -14,9 +14,9 @@ class ServerController extends Controller
     public function getFetchDetails(Request $request)
     {
         $url = $request['url'];
-        //$url = 'http://wikipedia.org';
+//        $url = 'http://wikipedia.org';
 
-        if(strpos($url,'http://') === false)
+        if(strpos($url,'http') === false)
         {
             $url = 'http://' . $url;
         }
@@ -25,8 +25,10 @@ class ServerController extends Controller
         $title=null;
 
         $dom = new DOMDocument();
+        $html = file_get_contents($url);
+
         //echo file_get_contents($url);
-        @$dom->loadHTML(file_get_contents($url));
+        @$dom->loadHTML($html);
         $title = $dom->getElementsByTagName('title')->item(0)->textContent;
 
         $metas = $dom->getElementsByTagName('meta');
@@ -38,19 +40,37 @@ class ServerController extends Controller
                 $desc = $meta->getAttribute('content');
             else if(strpos($meta->getAttribute('property'), 'description') !== false)
                 $desc = $meta->getAttribute('content');
+        }
+
+        if($desc ==null)
+        {
+            $texts= $dom->getElementsByTagName('span');
+            if($texts==null or $texts[0]==null)
+            {
+                $texts= $dom->getElementsByTagName('p');
+            }
+            else
+                $text = $texts[0];
 
 
+            //echo $text->textContent;
+
+            $content = strip_tags($text->textContent);
+            $desc = substr($content,0,50).'...';
         }
 
         if($image==null)
         {
-            $xpath = new DOMXPath($dom);
-            $nodelist = $xpath->query("//img");
-            $node = $nodelist->item(0); // gets the 1st image
-            if($node!=null) {
-                $value = $node->attributes->getNamedItem('src')->nodeValue;
+            $tags = $dom->getElementsByTagName('img');
+            $imgtag = $tags[0];
+            //echo $tags."asdadsad";
+            if($imgtag!=null) {
+                $value = $imgtag->getAttribute('src');
                 $image = $value;
-                if(strpos($image,'http://') === false)
+                $parsedImgUrl = parse_url($image);
+//
+//              if(strpos($image,'http') === false)
+                if($parsedImgUrl==null or !isset($parsedImgUrl['host']))
                 {
                     $parsedURL = parse_url($url);
                     $prefix = $parsedURL['host'];
@@ -66,7 +86,7 @@ class ServerController extends Controller
     public function getSaveDetails(Request $request)
     {
         $url = $request['url'];
-        if(strpos($url,'http://') === false)
+        if(strpos($url,'http') === false)
         {
             $url = 'http://' . $url;
         }

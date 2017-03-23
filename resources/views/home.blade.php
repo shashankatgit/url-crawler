@@ -12,7 +12,7 @@
         <div class="panel panel-primary center-block">
             <div class="panel-heading"></div>
             <div class="panel-body">
-                Enter URL : <input type="url" name="url" id="url"  style="width:60%">
+                Enter URL : <input type="url" name="url" id="url"  value="en.wikipedia.com" style="width:60%">
                 <br><br>
                 <button onclick="fetchDetails()">Fetch</button>
             </div>
@@ -61,10 +61,8 @@
                     if (xmlhttp.readyState == XMLHttpRequest.DONE) {
                         if (xmlhttp.status == 200) {
 
+                            console.log(resultjson);
                             var resultjson = JSON.parse(xmlhttp.responseText);
-
-                            if(resultjson['image']==null)
-                                    resultjson['image']='/res/na.png';
 
                             if(resultjson['description']==null)
                                     resultjson['description']='Not available';
@@ -76,17 +74,17 @@
                                 document.getElementById("titleText").innerHTML = resultjson['title'];
 
                                 document.getElementById("imageView").setAttribute("src", resultjson['image']!=null?
-                                        resultjson['image']:'/res/na.png');
+                                        resultjson['image']:'{{route('crawler.home')}}/res/na.png');
                                 document.getElementById("imageView").removeAttribute('hidden');
 
                                 document.getElementById("descriptionText").innerHTML = resultjson['description'];
 
 
                                 document.getElementById("urlForm").value = url;
-                                document.getElementById("titleForm").value = resultjson['image'];
-                                document.getElementById("imageForm").value = '/res/na.png';
-
+                                document.getElementById("titleForm").value = resultjson['title'];
+                                document.getElementById("imageForm").value = resultjson['image'];
                                 document.getElementById("descriptionForm").value = resultjson['description'];
+
                                 document.getElementById("saveButton").removeAttribute('disabled');
                             }
 
