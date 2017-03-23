@@ -17,10 +17,12 @@ Route::get('/', function () {
 });
 
 Route::get('/fetch', [
-        'as' => 'crawler.fetch'
+        'as' => 'crawler.fetch',
+        'uses' => 'ServerController@getFetchDetails'
 ]);
 
 Route::get('/save', [
-        'as' => 'crawler.save'
+        'as' => 'crawler.save',
+        'uses' => 'ServerController@getSaveDetails'
 ]);
 
