@@ -12,7 +12,7 @@
         <div class="panel panel-primary center-block">
             <div class="panel-heading"></div>
             <div class="panel-body">
-                Enter URL : <input type="url" name="url" id="url" onblur="fetchDetails()" style="width:60%">
+                Enter URL : <input type="url" name="url" id="url"  style="width:60%">
                 <br><br>
                 <button onclick="fetchDetails()">Fetch</button>
             </div>
@@ -24,10 +24,10 @@
             <div class="panel-body">
                 <div>
                     Title : <span id="titleText">N/A</span><br>
-                    <br>
-                    Image : <br>
+                    <br><br>
+                    Image : <br><br>
                     <img id="imageView" src="" hidden>
-                    <br>
+                    <br><br>
                     Description : <span id="descriptionText"></span>
                     <br><br>
                 </div>
@@ -50,7 +50,56 @@
 
 
 
-        <script type="text/javascript" src="webassets/script.js"></script>
+        <script type="text/javascript">
+            function fetchDetails() {
+                var url = document.getElementById("url").value;
+                console.log(url);
+
+                var xmlhttp = new XMLHttpRequest();
+
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+                        if (xmlhttp.status == 200) {
+
+                            var resultjson = JSON.parse(xmlhttp.responseText);
+
+                            if(resultjson['image']==null)
+                                    resultjson['image']='/res/na.png';
+
+                            if(resultjson['description']==null)
+                                    resultjson['description']='Not available';
+
+                            if(resultjson['title']==null)
+                                    resultjson['title']='Not available';
+
+                            if(resultjson['success']=true) {
+                                document.getElementById("titleText").innerHTML = resultjson['title'];
+
+                                document.getElementById("imageView").setAttribute("src", resultjson['image']!=null?
+                                        resultjson['image']:'/res/na.png');
+                                document.getElementById("imageView").removeAttribute('hidden');
+
+                                document.getElementById("descriptionText").innerHTML = resultjson['description'];
+
+
+                                document.getElementById("urlForm").value = url;
+                                document.getElementById("titleForm").value = resultjson['image'];
+                                document.getElementById("imageForm").value = '/res/na.png';
+
+                                document.getElementById("descriptionForm").value = resultjson['description'];
+                                document.getElementById("saveButton").removeAttribute('disabled');
+                            }
+
+
+                        }
+                    }
+                };
+                xmlhttp.open("GET","{{route('crawler.fetch')}}?url=" + url, true);
+                xmlhttp.send();
+            }
+
+
+        </script>
         <script type="text/javascript" src="webassets/bootstrap.js"></script>
     </body>
 </html>

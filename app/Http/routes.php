@@ -12,9 +12,9 @@
 */
 
 
-Route::get('/', function () {
+Route::get('/', ['as'=>'crawler.home', function () {
     return view('home');
-});
+}]);
 
 Route::get('/fetch', [
         'as' => 'crawler.fetch',
