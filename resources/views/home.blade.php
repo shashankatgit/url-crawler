@@ -12,7 +12,7 @@
         <div class="panel panel-primary center-block">
             <div class="panel-heading"></div>
             <div class="panel-body">
-                Enter URL : <input type="url" name="url" id="url" onblur="fetchDetails()">
+                Enter URL : <input type="url" name="url" id="url" onblur="fetchDetails()" style="width:60%">
                 <br><br>
                 <button onclick="fetchDetails()">Fetch</button>
             </div>
